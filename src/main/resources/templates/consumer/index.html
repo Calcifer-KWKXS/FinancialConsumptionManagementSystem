@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title></title>
+    <style>
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        .el-container,
+        .el-main {
+            overflow-y: scroll;
+            scrollbar-color: transparent transparent;
+            scrollbar-track-color: transparent;
+            height: 100%;
+        }
+
+        .el-header {
+            background-color: #458b74;
+            color: #fff;
+            text-align: center;
+            font-size: 25px;
+            line-height: 60px;
+            border-radius: 5px;
+        }
+    </style>
+    <link rel="stylesheet" href="/js/index.min.css"/>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/vue.min.js"></script>
+    <script src="/js/index.min.js"></script>
+    <script src="/js/jquery.cookie.min.js"></script>
+</head>
+<body>
+<el-container id="app">
+    <!-- 标题栏 -->
+    <el-header height="70px">
+        <el-row>
+            <el-col :span="20" :offset="2">0元购商城</el-col>
+            <el-col :span="2">
+                <el-dropdown>
+							<span style="font-size:25px;color:#fff;cursor:pointer;">
+								<i class="el-icon-user-solid"></i>
+							</span>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item style="font-size:18px;">
+                            <el-link href="#">{{account}}</el-link>
+                        </el-dropdown-item>
+                        <el-dropdown-item style="font-size:18px;">
+                            <el-link href="/login.html">登录</el-link>
+                        </el-dropdown-item>
+                        <el-dropdown-item style="font-size:18px;">
+                            <el-link href="/cre/index">信用管理</el-link>
+                        </el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+            </el-col>
+        </el-row>
+    </el-header>
+    <el-main>
+        <!-- 顶部导航 -->
+        <el-menu mode="horizontal" unique-opened="true" style="margin-top:-20px;">
+            <el-submenu index="1">
+                <template slot="title">
+                    <span style="font-size:18px;">模块A</span>
+                </template>
+                <el-menu-item style="font-size:16px;" @click="openWork('/con/productlist');">商品列表</el-menu-item>
+                <el-menu-item style="font-size:16px;" @click="openWork('/con/cart');">购物车</el-menu-item>
+                <el-menu-item style="font-size:16px;" @click="openWork('/con/work3');">子模块C</el-menu-item>
+            </el-submenu>
+            <el-submenu index="2">
+                <template slot="title">
+                    <span style="font-size:18px;">模块B</span>
+                </template>
+                <el-menu-item style="font-size:16px;" @click="">子模块A</el-menu-item>
+                <el-menu-item style="font-size:16px;" @click="">子模块B</el-menu-item>
+                <el-menu-item style="font-size:16px;" @click="">子模块C</el-menu-item>
+            </el-submenu>
+            <el-submenu index="3">
+                <template slot="title">
+                    <span style="font-size:18px;">模块C</span>
+                </template>
+                <el-menu-item style="font-size:16px;" @click="">子模块A</el-menu-item>
+                <el-menu-item style="font-size:16px;" @click="">子模块B</el-menu-item>
+                <el-menu-item style="font-size:16px;" @click="">子模块C</el-menu-item>
+            </el-submenu>
+        </el-menu>
+        <!-- 工作区 -->
+        <div v-html="work" style="height:95%;margin-top:-30px;margin-right:-40px;"></div>
+    </el-main>
+</el-container>
+<script>
+    var app = new Vue({
+        el: "#app",
+        data: {
+            work: "<iframe frameborder=0 width=100% height=100% src='/con/productlist'></iframe>",
+            account: ""  //这里会把 account <el-link href="#">{{account}}</el-link>
+        },
+        methods: {
+            openWork(work) {
+                this.work = "<iframe frameborder=0 width=100% height=100% src='" + work + "'></iframe>";
+            }
+        },
+        created() {
+            this.account = $.cookie("account"); //这行是将浏览器里缓存的用户名给 data中的 account
+        }
+    });
+</script>
+</body>
+</html>

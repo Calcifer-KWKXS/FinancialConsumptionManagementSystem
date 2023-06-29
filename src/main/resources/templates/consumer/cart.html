@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="/js/index.min.css"/>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/vue.min.js"></script>
+    <script src="/js/index.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <el-row>
+        <el-col :span="18">
+            <el-row v-for="c in cartitems">
+                <el-col :span="6">
+                    <img :src="c.imgsrc" style="width:95%;">
+                </el-col>
+                <el-col :span="18">
+                    <h3>{{c.pid}}|{{c.pname}}|¥{{c.price}}</h3>
+                    <el-input-number v-model="c.pcount" @change="handleChange(c.pid,c.pcount);" :min="1" :max="10"
+                                     label="商品件数"></el-input-number>
+                    <!--每次点击 + 或 - 都会触发 handleChange(c.pid,c.pcount) 函数-->
+                    <span style="font-size: 22px;color: indianred;">¥{{c.sumprice}}</span>
+                    <span><el-button type="danger" @click="deleteItem(c.pid);"><i class="el-icon-close"></i></el-button></span>
+                </el-col>
+            </el-row>
+        </el-col>
+        <el-col :span="6">
+            <h3>价格总计</h3>
+            <div style="font-size:30px;color: indianred;">¥{{totalprice}}</div>
+            <div style="margin-top: 15px;">
+                <el-button type="danger" @click="toOrderFlow();">->下单流程</el-button>
+            </div>
+        </el-col>
+    </el-row>
+</div>
+<script>
+    var app = new Vue({
+        el: "#app",
+        data: {
+            cartitems: [],
+            totalprice: ""
+        },
+        methods: {
+            //查询购物车
+            showcart() {
+                $.post("/cart/selectCart", {}, function (d) {
+                    app.cartitems = d.items;
+                    app.totalprice = d.totalPrice;
+                });
+            },
+            //修改件数
+            handleChange (pid, pcount) {
+                $.post("/cart/updateCount", {
+                    pid: pid,
+                    pcount: pcount
+                }, function (d) {
+                    if (d == "success") {
+                        app.showcart();
+                        //重新查询购物车 --> 实现了购物车页面数据的更新
+                    }
+                });
+            },
+            //删除购物车项
+            deleteItem: function (pid) {
+                $.post("/cart/deleteItem", {pid: pid}, function (d) {
+                    if (d == "success") {
+                        app.showcart();
+                    }
+                });
+            },
+            //去下单流程
+            toOrderFlow() {
+                location.href = "/con/orderflow"; //就做了个页面跳转
+            }
+        },
+        created: function () { // 进入页面加载？???
+            this.showcart();
+        }
+    });
+</script>
+</body>
+</html>

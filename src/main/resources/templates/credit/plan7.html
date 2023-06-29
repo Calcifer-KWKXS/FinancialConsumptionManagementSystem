@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="/js/index.min.css"/>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/vue.min.js"></script>
+    <script src="/js/index.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <h3 style="text-align: center">7日待还款</h3>
+    <table border="1" style="margin:auto; width:450px;">
+        <tr>
+            <th>帐单号</th>
+            <th>费用</th>
+            <th>应还日期</th>
+            <th>状态</th>
+        </tr>
+        <tr v-for='item in planList'>
+            <td>{{item.creditId}}</td>
+            <td>{{item.amount}}</td>
+            <td>{{item.expectpaytime}}</td>
+            <td>{{item.state?'未逾期':'已逾期'}}</td>
+        </tr>
+    </table>
+</div>
+<script>
+    var app = new Vue({
+        el: "#app",
+        data: {
+            planList:[]
+        },
+        mounted() {
+            $.post("/payback",  function (d){
+                app.planList = d;
+            })
+        }
+    });
+</script>
+</body>
+</html>

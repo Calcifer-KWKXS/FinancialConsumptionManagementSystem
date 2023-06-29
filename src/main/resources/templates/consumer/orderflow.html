@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="/js/index.min.css"/>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/vue.min.js"></script>
+    <script src="/js/index.min.js"></script>
+
+</head>
+<body>
+<div id="app">
+    <div style="margin-top: 15px;">
+        <el-button type="danger" @click="history.back();"><-后退</el-button>
+    </div>
+    <h3 style="margin-top:30px;">收货地址</h3>
+    <el-form :inline="true">
+        <el-form-item>
+            <el-select v-model="prov" @change="changeProv">
+                <el-option v-for="c in provs" :label="c.name" :value="c.name"></el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item>
+            <el-select v-model="city" @change="changeCity">
+                <el-option v-for="c in citys" :label="c.name" :value="c.name"></el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item>
+            <el-select v-model="area" >
+                <el-option v-for="c in areas" :label="c" :value="c"></el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item label="详细地址">
+            <el-input v-model="addr"></el-input>
+        </el-form-item>
+    </el-form>
+    <h3>结算信息</h3>
+    <el-form :inline="true">
+        <el-form-item>
+            <span style="font-size:25px;color: indianred;">¥{{totalprice}}</span>
+        </el-form-item>
+        <el-form-item label="分期数">
+            <el-select v-model="stage">
+                <el-option label="3期" value="3"></el-option>
+                <el-option label="6期" value="6"></el-option>
+                <el-option label="12期" value="12"></el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item>
+            <el-button  type="primary" @click="insertOrder();">下单</el-button>
+        </el-form-item>
+    </el-form>
+<!--  保存地址  -->
+    <el-button  type="primary" @click="saveAddr();"></el-button>
+</div>
+<script>
+    var app = new Vue({
+        el: "#app",
+        data: {
+            provs: [],
+            citys: [],
+            areas: [],
+            prov: "",
+            city: "",
+            area: "",
+            addr: "",
+            totalprice: "",
+            stage: ""
+        },
+        methods: {
+            //changeProv
+            changeProv (val) {
+                this.city = "";
+                this.area = "";
+                this.provs.forEach((n) => {
+                    if (n.name == val) {
+                        app.citys = n.city;
+                    }
+                });
+            },
+            //changeCity
+            changeCity (val) {
+                this.area = "";
+                this.citys.forEach((n) => {
+                    if (n.name == val) {
+                        app.areas = n.area;
+                    }
+                });
+            },
+            //changeArea
+            saveAddr () {
+
+            },
+            //insertOrder
+            insertOrder () {
+                //算分期数对应每期多少钱：年利率 30%
+                //分3期： 利息：总额 * 30% * 3/12
+                $.post("/order/insertOrder", {
+                    prov: this.prov,
+                    city: this.city,
+                    district: this.area,
+                    addr: this.addr,
+                    stage: this.stage
+                }, (d) => {
+                    this.$alert(d);
+                });
+            }
+        },
+        created () { //自动执行的方法
+            //查询购物车
+            $.post("/cart/selectCart", {}, function (d) {
+                app.totalprice = d.totalPrice; //查询购物车，获得购物车总价
+            });
+            //获取省市区json
+            $.get("/china/china.json", {}, function (d) {
+                // 从这"/china/china.json" 获取的省市区数据(这个数据不变，所以直接在静态写死)
+                app.provs = d;
+            });
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="li.dao.PaybackMapper">
+
+    <select id="select7Plan" resultType="li.dto.Payback">
+        select pay.* from payback pay join credit cre
+        on pay.credit_id=cre.id
+        where cre.consumer_id=#{userid} and
+        pay.expectpaytime
+        &lt;= date_add(now(),interval 7 day)
+    </select>
+</mapper>

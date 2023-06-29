@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="/js/index.min.css"/>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/vue.min.js"></script>
+    <script src="/js/index.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <el-form style="margin-top:25px;">
+        <el-form-item label="账号">
+            <span style="font-size:28px; ">{{a.account}}</span>
+        </el-form-item>
+        <el-form-item label="总额度">
+            <span style="font-size:40px;color: indianred; ">¥{{a.totalamount}}</span>
+        </el-form-item>
+        <el-form-item label="已用额度">
+            <span style="font-size:40px;color: indianred; ">¥{{a.useamount}}</span>
+        </el-form-item>
+        <el-form-item label="可用额度">
+            <span style="font-size:40px;color: indianred; ">¥{{a.freeamount}}</span>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="danger" @click="aplly()">提额</el-button>
+        </el-form-item>
+    </el-form>
+</div>
+<script>
+    var app = new Vue({
+        el: "#app",
+        data: {
+            //amount对象
+            a: {}
+        },
+        methods: {
+            showAmount() {
+                let that=this;
+                $.post("/selectAmount", {}, function (d) {
+                    if(d=="global-exception"){
+                        that.$alert("请先登录");
+                        return;
+                    }
+                    app.a = d;
+                });
+            },
+            aplly() {
+                let that=this;
+                $.post("/aplly", {}, d=> {
+                    this.a=d
+                });
+            }
+
+        },
+        created() {
+            this.showAmount();
+        }
+    });
+</script>
+</body>
+</html>
