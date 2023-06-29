@@ -1,4 +1,4 @@
-# FinancialConsumptionManagementSystem
+# 金融消费管理系统
 项目描述：是一个管理依托信用额度消费的购物网站系统
 主要功能：
 1. 认证业务：实现用户的注册和登录，将用户信息插入 user 表中。
